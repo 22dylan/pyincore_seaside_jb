@@ -1,0 +1,15 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+
+parts:
+  - caption: Notebooks
+    chapters:
+    - file: nb1/Seaside_testbed
+    - file: nb2/Seaside_CommDescription
+    - file: nb3/Notebook1_Seaside
+  - caption: References
+    chapters:
+    - file: ref/ref
