@@ -1,0 +1,219 @@
+Traceback (most recent call last):
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/jupyter_cache/executors/utils.py", line 56, in single_nb_execution
+    record_timing=False,
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/nbclient/client.py", line 1117, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/nbclient/util.py", line 78, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/nbclient/util.py", line 57, in just_run
+    return loop.run_until_complete(coro)
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/asyncio/base_events.py", line 587, in run_until_complete
+    return future.result()
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/nbclient/client.py", line 559, in async_execute
+    cell, index, execution_count=self.code_cells_executed + 1
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/nbclient/client.py", line 862, in async_execute_cell
+    self._check_raise_for_error(cell, exec_reply)
+  File "/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/nbclient/client.py", line 765, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# --- Earthquake 
+# initializing epf damage and fragility service
+epf_dmg = EpfDamage(client)
+fragility_service = FragilityService(client)
+
+# defining electric pole dataset (GIS point layer)
+poles_ss_id = "5d263f08b9219cf93c056c68"     # elelctric power poles and substation
+epf_dmg.load_remote_input_dataset("epfs", poles_ss_id)
+
+# Fragility Mapping on incore-service
+mapping_id = "5d489aa1b9219c0689f1988e" # 5 DS
+# mapping_id = "6079f6a7ef881f48a4ace306" # 4 DS
+mapping_set = MappingSet(fragility_service.get_mapping(mapping_id))
+epf_dmg.set_input_dataset('dfr3_mapping_set', mapping_set)
+
+epf_dmg.set_parameter("hazard_type", 'earthquake')
+epf_dmg.set_parameter("num_cpu", 4)
+epf_dmg.set_parameter('fragility_key', "pga")
+
+result_name = os.path.join(path_to_output, 'electric_eq_{}yr'.format(ret_prd))
+hazard_id = eq_hazard_dict[ret_prd]
+
+epf_dmg.set_parameter("hazard_id", hazard_id)
+epf_dmg.set_parameter("result_name", result_name)
+
+# Run Analysis
+epf_dmg.run_analysis()
+print('Earthquake done.')
+
+
+# --- Tsunami
+# Initializing EPF damage and fragility service
+epf_dmg = EpfDamage(client)
+fragility_service = FragilityService(client)
+
+# defining electric poles and substation dataset (GIS point layer)
+poles_ss_id = "5d263f08b9219cf93c056c68"
+epf_dmg.load_remote_input_dataset("epfs", poles_ss_id)
+
+# Fragility Mapping on incore-service
+mapping_id = "5d31eb7fb9219c6d66398445" # 5 DS
+# mapping_id = "6079c5e06799d908861f177c" # 4 DS
+mapping_set = MappingSet(fragility_service.get_mapping(mapping_id))
+epf_dmg.set_input_dataset('dfr3_mapping_set', mapping_set)
+
+epf_dmg.set_parameter("hazard_type", "tsunami")
+epf_dmg.set_parameter("num_cpu", 4)
+epf_dmg.set_parameter('fragility_key', "Non-Retrofit inundationDepth Fragility ID Code")
+
+result_name = os.path.join(path_to_output, 'electric_tsu_{}yr'.format(ret_prd))
+hazard_id = tsu_hazard_dict[ret_prd]
+
+epf_dmg.set_parameter("hazard_id", hazard_id)
+epf_dmg.set_parameter("result_name", result_name)
+
+# Run Analysis
+epf_dmg.run_analysis()
+print('Tsunami done.')
+
+
+# --- Cumulative
+print('\nCumulative electric damage does not exist in pyIncore yet. Doing manually.')
+path_to_eq = os.path.join(path_to_output, 'electric_eq_{}yr.csv' .format(ret_prd))
+path_to_ts = os.path.join(path_to_output, 'electric_tsu_{}yr.csv' .format(ret_prd))
+
+eq_df = pd.read_csv(path_to_eq, index_col=0)
+ts_df = pd.read_csv(path_to_ts, index_col=0)
+
+cumulative = pd.DataFrame(index=eq_df.index)
+cumulative["LS_0"] = eq_df["LS_0"] + ts_df["LS_0"] \
+    - eq_df["LS_0"] * ts_df["LS_0"]
+
+cumulative["LS_1"] = eq_df["LS_1"] + ts_df["LS_1"] - eq_df["LS_1"] * ts_df["LS_1"] \
+    + ((eq_df["LS_0"] - eq_df["LS_1"]) * (ts_df["LS_0"] - ts_df["LS_1"]))
+
+cumulative["LS_2"] = eq_df["LS_2"] + ts_df["LS_2"] \
+    - eq_df["LS_2"] * ts_df["LS_2"] \
+    + ((eq_df["LS_1"] - eq_df["LS_2"]) * (ts_df["LS_1"] - ts_df["LS_2"]))
+
+cumulative["LS_3"] = eq_df["LS_3"] + ts_df["LS_3"] \
+    - eq_df["LS_3"] * ts_df["LS_3"] \
+    + ((eq_df["LS_2"] - eq_df["LS_3"]) * (ts_df["LS_2"] - ts_df["LS_3"]))
+
+cumulative['DS_0'] = 1-cumulative['LS_0']
+cumulative['DS_1'] = cumulative['LS_0'] - cumulative['LS_1']
+cumulative['DS_2'] = cumulative['LS_1'] - cumulative['LS_2']
+cumulative['DS_3'] = cumulative['LS_2'] - cumulative['LS_3']
+cumulative['DS_4'] = cumulative['LS_3']
+
+cumulative['hazard'] = 'Earthquake+Tsunami'
+path_to_cumulative = os.path.join(path_to_output, 'electric_cumulative_{}yr.csv' .format(ret_prd))
+cumulative.to_csv(path_to_cumulative)
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mKeyboardInterrupt[0m                         Traceback (most recent call last)
+    [0;31m[... skipping hidden 1 frame][0m
+
+[0;32m<ipython-input-21-ecec56334900>[0m in [0;36m<module>[0;34m[0m
+[1;32m     56[0m [0;31m# Run Analysis[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 57[0;31m [0mepf_dmg[0m[0;34m.[0m[0mrun_analysis[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m     58[0m [0mprint[0m[0;34m([0m[0;34m'Tsunami done.'[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/pyincore/baseanalysis.py[0m in [0;36mrun_analysis[0;34m(self)[0m
+[1;32m    263[0m [0;34m[0m[0m
+[0;32m--> 264[0;31m         [0;32mreturn[0m [0mself[0m[0;34m.[0m[0mrun[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    265[0m [0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/pyincore/analyses/epfdamage/epfdamage.py[0m in [0;36mrun[0;34m(self)[0m
+[1;32m     80[0m                                                                          [0mrepeat[0m[0;34m([0m[0muse_liquefaction[0m[0;34m)[0m[0;34m,[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 81[0;31m                                                                          repeat(liq_geology_dataset_id))
+[0m[1;32m     82[0m [0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/pyincore/analyses/epfdamage/epfdamage.py[0m in [0;36mepf_damage_concurrent_future[0;34m(self, function_name, num_workers, *args)[0m
+[1;32m    104[0m         [0;32mwith[0m [0mconcurrent[0m[0;34m.[0m[0mfutures[0m[0;34m.[0m[0mProcessPoolExecutor[0m[0;34m([0m[0mmax_workers[0m[0;34m=[0m[0mnum_workers[0m[0;34m)[0m [0;32mas[0m [0mexecutor[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 105[0;31m             [0;32mfor[0m [0mret1[0m[0;34m,[0m [0mret2[0m [0;32min[0m [0mexecutor[0m[0;34m.[0m[0mmap[0m[0;34m([0m[0mfunction_name[0m[0;34m,[0m [0;34m*[0m[0margs[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    106[0m                 [0moutput_ds[0m[0;34m.[0m[0mextend[0m[0;34m([0m[0mret1[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/concurrent/futures/process.py[0m in [0;36m_chain_from_iterable_of_lists[0;34m(iterable)[0m
+[1;32m    482[0m     """
+[0;32m--> 483[0;31m     [0;32mfor[0m [0melement[0m [0;32min[0m [0miterable[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    484[0m         [0melement[0m[0;34m.[0m[0mreverse[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/concurrent/futures/_base.py[0m in [0;36mresult_iterator[0;34m()[0m
+[1;32m    597[0m                     [0;32mif[0m [0mtimeout[0m [0;32mis[0m [0;32mNone[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 598[0;31m                         [0;32myield[0m [0mfs[0m[0;34m.[0m[0mpop[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0mresult[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    599[0m                     [0;32melse[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/concurrent/futures/_base.py[0m in [0;36mresult[0;34m(self, timeout)[0m
+[1;32m    429[0m [0;34m[0m[0m
+[0;32m--> 430[0;31m             [0mself[0m[0;34m.[0m[0m_condition[0m[0;34m.[0m[0mwait[0m[0;34m([0m[0mtimeout[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    431[0m [0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/threading.py[0m in [0;36mwait[0;34m(self, timeout)[0m
+[1;32m    295[0m             [0;32mif[0m [0mtimeout[0m [0;32mis[0m [0;32mNone[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 296[0;31m                 [0mwaiter[0m[0;34m.[0m[0macquire[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    297[0m                 [0mgotit[0m [0;34m=[0m [0;32mTrue[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mKeyboardInterrupt[0m: 
+
+During handling of the above exception, another exception occurred:
+
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/interactiveshell.py[0m in [0;36mshowtraceback[0;34m(self, exc_tuple, filename, tb_offset, exception_only, running_compiled_code)[0m
+[1;32m   2060[0m                         [0;31m# in the engines. This should return a list of strings.[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[0;32m-> 2061[0;31m                         [0mstb[0m [0;34m=[0m [0mvalue[0m[0;34m.[0m[0m_render_traceback_[0m[0;34m([0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   2062[0m                     [0;32mexcept[0m [0mException[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mAttributeError[0m: 'KeyboardInterrupt' object has no attribute '_render_traceback_'
+
+During handling of the above exception, another exception occurred:
+
+[0;31mTypeError[0m                                 Traceback (most recent call last)
+    [0;31m[... skipping hidden 1 frame][0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/interactiveshell.py[0m in [0;36mshowtraceback[0;34m(self, exc_tuple, filename, tb_offset, exception_only, running_compiled_code)[0m
+[1;32m   2062[0m                     [0;32mexcept[0m [0mException[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   2063[0m                         stb = self.InteractiveTB.structured_traceback(etype,
+[0;32m-> 2064[0;31m                                             value, tb, tb_offset=tb_offset)
+[0m[1;32m   2065[0m [0;34m[0m[0m
+[1;32m   2066[0m                     [0mself[0m[0;34m.[0m[0m_showtraceback[0m[0;34m([0m[0metype[0m[0;34m,[0m [0mvalue[0m[0;34m,[0m [0mstb[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/ultratb.py[0m in [0;36mstructured_traceback[0;34m(self, etype, value, tb, tb_offset, number_of_lines_of_context)[0m
+[1;32m   1366[0m             [0mself[0m[0;34m.[0m[0mtb[0m [0;34m=[0m [0mtb[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1367[0m         return FormattedTB.structured_traceback(
+[0;32m-> 1368[0;31m             self, etype, value, tb, tb_offset, number_of_lines_of_context)
+[0m[1;32m   1369[0m [0;34m[0m[0m
+[1;32m   1370[0m [0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/ultratb.py[0m in [0;36mstructured_traceback[0;34m(self, etype, value, tb, tb_offset, number_of_lines_of_context)[0m
+[1;32m   1266[0m             [0;31m# Verbose modes need a full traceback[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[1;32m   1267[0m             return VerboseTB.structured_traceback(
+[0;32m-> 1268[0;31m                 [0mself[0m[0;34m,[0m [0metype[0m[0;34m,[0m [0mvalue[0m[0;34m,[0m [0mtb[0m[0;34m,[0m [0mtb_offset[0m[0;34m,[0m [0mnumber_of_lines_of_context[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   1269[0m             )
+[1;32m   1270[0m         [0;32melif[0m [0mmode[0m [0;34m==[0m [0;34m'Minimal'[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/ultratb.py[0m in [0;36mstructured_traceback[0;34m(self, etype, evalue, etb, tb_offset, number_of_lines_of_context)[0m
+[1;32m   1123[0m [0;34m[0m[0m
+[1;32m   1124[0m         formatted_exception = self.format_exception_as_a_whole(etype, evalue, etb, number_of_lines_of_context,
+[0;32m-> 1125[0;31m                                                                tb_offset)
+[0m[1;32m   1126[0m [0;34m[0m[0m
+[1;32m   1127[0m         [0mcolors[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mColors[0m  [0;31m# just a shorthand + quicker name lookup[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/ultratb.py[0m in [0;36mformat_exception_as_a_whole[0;34m(self, etype, evalue, etb, number_of_lines_of_context, tb_offset)[0m
+[1;32m   1080[0m [0;34m[0m[0m
+[1;32m   1081[0m [0;34m[0m[0m
+[0;32m-> 1082[0;31m         [0mlast_unique[0m[0;34m,[0m [0mrecursion_repeat[0m [0;34m=[0m [0mfind_recursion[0m[0;34m([0m[0morig_etype[0m[0;34m,[0m [0mevalue[0m[0;34m,[0m [0mrecords[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m   1083[0m [0;34m[0m[0m
+[1;32m   1084[0m         [0mframes[0m [0;34m=[0m [0mself[0m[0;34m.[0m[0mformat_records[0m[0;34m([0m[0mrecords[0m[0;34m,[0m [0mlast_unique[0m[0;34m,[0m [0mrecursion_repeat[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/IPython/core/ultratb.py[0m in [0;36mfind_recursion[0;34m(etype, value, records)[0m
+[1;32m    380[0m     [0;31m# first frame (from in to out) that looks different.[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    381[0m     [0;32mif[0m [0;32mnot[0m [0mis_recursion_error[0m[0;34m([0m[0metype[0m[0;34m,[0m [0mvalue[0m[0;34m,[0m [0mrecords[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 382[0;31m         [0;32mreturn[0m [0mlen[0m[0;34m([0m[0mrecords[0m[0;34m)[0m[0;34m,[0m [0;36m0[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    383[0m [0;34m[0m[0m
+[1;32m    384[0m     [0;31m# Select filename, lineno, func_name to track frames with[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mTypeError[0m: object of type 'NoneType' has no len()
+TypeError: object of type 'NoneType' has no len()
+
