@@ -8,11 +8,8 @@ logo: images/resilience_logo.png
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  execute_notebooks: auto
+  execute_notebooks: 'off'
   timeout: 100000000000
-  exclude_patterns:
-    - 'Seaside_testbed.ipynb'
-    - 'Notebook1_Seaside.ipynb'
 
 
 # # Define the name of the latex output file for PDF builds

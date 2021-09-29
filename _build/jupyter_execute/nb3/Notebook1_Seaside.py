@@ -42,7 +42,7 @@
 # ## Start
 # **Importing all of the pyIncore modules used for this notebook**
 
-# In[ ]:
+# In[1]:
 
 
 from pyincore import IncoreClient, Dataset, DataService, HazardService, FragilityService
@@ -83,21 +83,17 @@ np.random.seed(1337)
 
 
 # **Defining recurrence interval to consider and number of MC simulations**
-# 
-# Pre-defining these values to be ran by Jupyter Book
 
-# In[ ]:
+# In[2]:
 
 
-# ret_prd = int(input('Hazard Recurrence Interval: '))
-# n_sims = int(input('Number of MC Simulations: '))
-ret_prd = 500
-n_sims = 10
+ret_prd = int(input('Hazard Recurrence Interval: '))
+n_sims = int(input('Number of MC Simulations: '))
 
 
 # **Defining output directory and creating it if does not exist**
 
-# In[ ]:
+# In[3]:
 
 
 path_to_output = os.path.join(os.getcwd(), 'output', '{}yr' .format(ret_prd))
@@ -138,7 +134,7 @@ if not os.path.exists(path_to_output):
 # #### Buildings
 # The building inventory for Seaside was originally collected by Park *et al.* (2017a) using a combination of tax-lot assessor data, field data collection, and Google street view. The terms parcels and buildings are used interchangeably.
 
-# In[ ]:
+# In[4]:
 
 
 bldg_dataset_id = "613ba5ef5d3b1d6461e8c415"        # defining building dataset (GIS point layer)
@@ -152,7 +148,7 @@ print('Number of buildings: {}' .format(len(bldg_df)))
 # #### Electric
 # The electric infrastructure was originallly collected by Kameshwar *et al.* (2019) and consists of electric poles, an electric substation, and electric power lines. Each building parcel in Seaside is mapped to the nearest electric pole.
 
-# In[ ]:
+# In[5]:
 
 
 elec_pole_dataset_id = "5d263f08b9219cf93c056c68"        # defining electric pole dataset (GIS point layer)
@@ -169,7 +165,7 @@ geoviz.plot_map(elec_line_dataset, column=None, category=False)
 # The transportation infrastructure was originallly collected by Kameshwar *et al.* (2019) and consists of roads and bridges. Each parcel in Seaside is mapped to the nearest node in the transportation network.
 # 
 
-# In[ ]:
+# In[6]:
 
 
 trns_road_dataset_id = "60e5e5cd544e944c3ce37d08"        # defining transportation road dataset (GIS point layer)
@@ -185,7 +181,7 @@ geoviz.plot_map(trns_brdg_dataset, column=None, category=False, basemap=True)
 # #### Water
 # The water infrastructure was originallly collected by Kameshwar *et al.* (2019) and consists of water pipes, a water treatment plant, and three water pumping stations. Each building parcel in Seaside is mapped to the nearest node in the water network.
 
-# In[ ]:
+# In[7]:
 
 
 wter_pipe_dataset_id = "60e72f9fd3c92a78c89636c7"        # defining water pipes (GIS point layer)
@@ -207,7 +203,7 @@ geoviz.plot_map(wter_fclty_dataset, column='utilfcltyc', category=True)
 # 
 # 
 
-# In[ ]:
+# In[8]:
 
 
 # Create housing allocation 
@@ -233,7 +229,7 @@ hua.run_analysis()
 
 # #### Explore results from Housing Unit Allocation
 
-# In[ ]:
+# In[9]:
 
 
 # Retrieve result dataset
@@ -249,7 +245,7 @@ print(hua_df[['guid','numprec','ownershp','geometry','aphumerge']].head())
 hua_df = hua_df.dropna(subset=['guid'])
 
 
-# In[ ]:
+# In[10]:
 
 
 hua_df['Race Ethnicity'] = "0 Vacant HU No Race Ethnicity Data"
@@ -276,7 +272,7 @@ table = pd.pivot_table(hua_df, values='numprec', index=['Race Ethnicity'],
                                      margins = True, margins_name = 'Total',
                                      columns=['Tenure Status'], aggfunc=[np.sum]).rename(
     columns={'Total': 'Total Population', 'sum': ''})
-table_title = "Table 1. Total Population by Race, Ethncity, and Tenure Status, Joplin, MO, 2010."
+table_title = "Table 1. Total Population by Race, Ethncity, and Tenure Status, Seaside, OR, 2010."
 varformat = {('','Total Population'): "{:,.0f}",
              ('','0 No Tenure Status'): "{:,.0f}",
              ('','1 Owner Occupied'): "{:,.0f}",
@@ -284,7 +280,7 @@ varformat = {('','Total Population'): "{:,.0f}",
 table.style.set_caption(table_title).format(varformat)
 
 
-# In[ ]:
+# In[11]:
 
 
 # Use shapely.wkt loads to convert WKT to GeoSeries
@@ -304,17 +300,54 @@ geoviz.plot_gdf_map(gdf, column='ownershp')
 # <a id='1c'></a>
 # ### 1c) Economic Systems
 # 
-# TODO: Fill out this section
-# 
-# Description of Seaside economic systems...
-# 
-# This section:
-# + __ 
+# For the CGE model, each parcel is mapped to an economic sector. The sector of each parcel is plotted spatially. 
 
-# In[ ]:
+# In[12]:
 
 
+bldg2sector_id = "5f5fd8e2980a301080a03996"
+bldg2sector_ds = Dataset.from_data_service(bldg2sector_id, data_service)
+bldg2sector_df = bldg2sector_ds.get_dataframe_from_csv()
 
+bldg_dataset_id = "613ba5ef5d3b1d6461e8c415"        # defining building dataset (GIS point layer)
+bldg_dataset = Dataset.from_data_service(bldg_dataset_id, data_service)
+bldg_dataset_df = bldg_dataset.get_dataframe_from_shapefile()
+
+df = pd.merge(bldg_dataset_df, bldg2sector_df, left_on='guid', right_on='guid')
+geoviz.plot_gdf_map(df, column='sector')
+
+
+# **Showing count of number of parcels in each sector**
+
+# In[13]:
+
+
+df[['guid','sector']].groupby('sector').count()
+
+
+# **Showing the real market value of parcels by sector**
+
+# In[14]:
+
+
+A = df[['rmv_improv','sector']].groupby('sector').sum()
+
+dic_capital = {}
+
+dic_capital['ACCOM'] = A.iloc[0,0] + A.iloc[1,0]
+dic_capital['AG'] = A.iloc[2,0] + A.iloc[3,0]
+dic_capital['CONST'] = A.iloc[4,0] + A.iloc[5,0]+A.iloc[6,0]
+dic_capital['HC'] = A.iloc[7,0] + A.iloc[8,0]+A.iloc[9,0]
+dic_capital['HS'] = A.iloc[10,0] + A.iloc[11,0]+A.iloc[12,0]
+dic_capital['MANUF'] = A.iloc[13,0]
+dic_capital['REST'] = A.iloc[14,0] + A.iloc[15,0]
+dic_capital['RETAIL'] = A.iloc[16,0] + A.iloc[17,0]+A.iloc[18,0]
+dic_capital['SERV'] = A.iloc[19,0] + A.iloc[20,0]+A.iloc[21,0]
+dic_capital['UTIL'] = A.iloc[22,0]
+
+ndf = pd.DataFrame(dic_capital.values(),index =['ACCOM', 'AG', 'CONST', 'HC', 'HS', 'MANUF', 'REST', 'RETAIL', 'SERV', 'UTIL'], columns =['Capital Stock($)'])
+ndf.sort_values(by=['Capital Stock($)'], inplace=True, ascending=False)
+ndf
 
 
 # <a id='2'></a>
@@ -338,7 +371,7 @@ geoviz.plot_gdf_map(gdf, column='ownershp')
 # | 5,000-yr | 5dfbca0cb9219c101fd8a58d | 5df90871b9219cd00ccff273 |
 # | 10,000-yr | 5dfa51bfb9219c934b68e6c2 | 5d27b986b9219c3c55ad37d0 |
 
-# In[ ]:
+# In[15]:
 
 
 eq_hazard_dict = {100: "5dfa4058b9219c934b64d495", 
@@ -401,7 +434,7 @@ geoviz.plot_raster_dataset(tsu_json['hazardDatasets'][1]['datasetId'], client)
 
 # #### Plotting some example fragility curves
 
-# In[ ]:
+# In[16]:
 
 
 """ TODO: issues with plotting some of these mappings. Looks like it 
@@ -450,7 +483,7 @@ for mapping in mapping_set.mappings[:3]:
 
 # #### Setting up a function to read Monte-Carlo results.
 
-# In[ ]:
+# In[17]:
 
 
 def read_MC_results(path_to_mc, n_sims):
@@ -475,7 +508,7 @@ def read_MC_results(path_to_mc, n_sims):
 
 # #### Setting up an alternative plotting function to plot buildings spatially.
 
-# In[ ]:
+# In[18]:
 
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -503,7 +536,7 @@ def plot_gdf_map(gdf, column, category=False, basemap=True, source=ctx.providers
 
 # #### Setting up a quick way to read pyIncore datasets into either dataframes or geodataframes.
 
-# In[ ]:
+# In[19]:
 
 
 def read_pyincore_df(client, ds_id, index=None):
@@ -532,7 +565,7 @@ def read_pyincore_gdf(client, ds_id, index=None):
 # #### Building Damage
 # Running building damage for earthquake, tsunami, and cumulative earthquake+tsunami.
 
-# In[ ]:
+# In[20]:
 
 
 # --- Earthquake
@@ -617,7 +650,7 @@ print('Cumulative done.')
 
 # Building MC Sampling
 
-# In[ ]:
+# In[21]:
 
 
 building_dmg_result = cumulative_bldg_dmg.get_output_dataset('combined-result')
@@ -643,7 +676,7 @@ mc_bldg.run()
 # + 2: Heavy Damage
 # + 3: Complete Damage
 
-# In[ ]:
+# In[22]:
 
 
 path_to_df = os.path.join(path_to_output, 'mc_buildings_cumulative_{}yr_sample_damage_states.csv' .format(ret_prd))
@@ -651,7 +684,7 @@ mc_df = read_MC_results(path_to_df, n_sims)
 mc_df.head()
 
 
-# In[ ]:
+# In[23]:
 
 
 mc_df['avg'] = mc_df.mean(axis=1) # getting average of MC results
@@ -670,7 +703,7 @@ plot_gdf_map(bldg_mc_df, column='avg', vmin=0, vmax=3, s=4, cmap='magma')
 # ####  Electric Damage
 # Running electric power network damage for earthquake, tsunami, and cumulative earthquake+tsunami. 
 
-# In[ ]:
+# In[24]:
 
 
 # --- Earthquake 
@@ -763,7 +796,7 @@ cumulative.to_csv(path_to_cumulative)
 
 # Electric MC Sampling
 
-# In[ ]:
+# In[25]:
 
 
 elec_dmg_result = Dataset.from_file(path_to_cumulative, data_type='incore:epfDamage')
@@ -788,7 +821,7 @@ mc.run()
 # + 2: Heavy Damage
 # + 3: Complete Damage
 
-# In[ ]:
+# In[26]:
 
 
 path_to_df = os.path.join(path_to_output, 'mc_electric_cumulative_{}yr_sample_damage_states.csv' .format(ret_prd))
@@ -796,7 +829,7 @@ mc_df = read_MC_results(path_to_df, n_sims)
 mc_df.head()
 
 
-# In[ ]:
+# In[27]:
 
 
 mc_df['avg'] = mc_df.mean(axis=1) # getting average of MC results
@@ -815,7 +848,7 @@ plot_gdf_map(elec_mc_df, column='avg', vmin=0, vmax=3, s=40, cmap='RdBu_r', edge
 # ####  Transportation Damage
 # Running road and bridge damage for earthquake, tsunami, and cumulative earthquake+tsunami.
 
-# In[ ]:
+# In[28]:
 
 
 # --- Earthquake
@@ -1002,7 +1035,7 @@ cumulative.to_csv(path_to_cumulative)
 
 # Transportation MC Sampling
 
-# In[ ]:
+# In[29]:
 
 
 # Road
@@ -1050,7 +1083,7 @@ mc.run()
 # + 2: Heavy Damage
 # + 3: Complete Damage
 
-# In[ ]:
+# In[30]:
 
 
 path_to_df = os.path.join(path_to_output, 'mc_road_cumulative_{}yr_sample_damage_states.csv' .format(ret_prd))
@@ -1058,7 +1091,7 @@ mc_df = read_MC_results(path_to_df, n_sims)
 mc_df.head()
 
 
-# In[ ]:
+# In[31]:
 
 
 mc_df['avg'] = mc_df.mean(axis=1) # getting average of MC results
@@ -1077,7 +1110,7 @@ plot_gdf_map(road_mc_df, column='avg', vmin=0, vmax=3, cmap='RdBu_r', linewidth=
 # #### Water Damage
 # Running water facility and water pipe damage for earthquake, tsunami, and cumulative earthquake+tsunami.
 
-# In[ ]:
+# In[32]:
 
 
 # --- Earthquake
@@ -1281,7 +1314,7 @@ cumulative.to_csv(path_to_cumulative)
 # <br>
 # For water facilities. MC for pipes was done above.
 
-# In[ ]:
+# In[33]:
 
 
 # Water Facility
@@ -1306,7 +1339,7 @@ mc.run()
 # + 0: Failed
 # + 1: Working
 
-# In[ ]:
+# In[34]:
 
 
 path_to_df = os.path.join(path_to_output, 'mc_wterpipe_cumulative_{}yr.csv' .format(ret_prd))
@@ -1315,7 +1348,7 @@ mc_df.set_index('guid', inplace=True)
 mc_df.head()
 
 
-# In[ ]:
+# In[35]:
 
 
 mc_df['avg'] = mc_df.mean(axis=1) # getting average of MC results
@@ -1346,7 +1379,7 @@ plot_gdf_map(pipe_mc_df, column='avg', vmin=0, vmax=1, cmap='RdBu', linewidth=4)
 
 # Creating some functions that will be used for each infrastructure system
 
-# In[ ]:
+# In[36]:
 
 
 def read_pyincore_nx(client, ds_id, transportation=False):
@@ -1444,7 +1477,7 @@ def restoration_curve(DS, means, stds, save_days, functionality_percentage=None)
 # 
 # Building functionality is defined as whether the sampled damage state results from the Monte-Carlo simulation are below a pre-defined damage state. 
 
-# In[ ]:
+# In[37]:
 
 
 def building_func(mc_dmg, func_ds=1):
@@ -1460,7 +1493,7 @@ def building_func(mc_dmg, func_ds=1):
 # 
 # Electric functionality is a binary value of 0 (no electricity) or 1 (has electricity). Pole failure probabilities are associated with each damage state. If a pole is failed, it is removed from the network. If a building is connected to the substation via the remaining electric lines, it has electricity. 
 
-# In[ ]:
+# In[38]:
 
 
 def electric_func(G, mc_dmg, bldg2ntwk_df, elec_pole_gdf, save_days=[1]):
@@ -1539,7 +1572,7 @@ def electric_func(G, mc_dmg, bldg2ntwk_df, elec_pole_gdf, save_days=[1]):
 # + $f(t)$: is the HAZUS functionality and is related to the damage state of a road/bridge segment via repair curves
 # 
 
-# In[ ]:
+# In[39]:
 
 
 def transportation_func(G, mc_dmg, bldg2ntwk_df, day=0, bridge_guids=None, save_days=[1]):
@@ -1621,7 +1654,7 @@ def transportation_func(G, mc_dmg, bldg2ntwk_df, day=0, bridge_guids=None, save_
 # 4. The water treatment plant must be connected to water pumping station $i$ (via the water network)
 # 5. Water pumping station $i$ must be connected to parcel $j$ (via the water network) 
 
-# In[ ]:
+# In[40]:
 
 
 def water_func(G_wter, G_elec_dict, mc_fail_pipe, fclty_mc_dmg, elec_mc_dmg, 
@@ -1789,7 +1822,7 @@ def water_func(G_wter, G_elec_dict, mc_fail_pipe, fclty_mc_dmg, elec_mc_dmg,
 
 # #### Building Functionality
 
-# In[ ]:
+# In[41]:
 
 
 path_to_df = os.path.join(path_to_output, 'mc_buildings_cumulative_{}yr_sample_damage_states.csv' .format(ret_prd))
@@ -1808,7 +1841,7 @@ plot_gdf_map(bldg_df, column='bldg_avg', vmin=0, vmax=1, cmap='magma', s=4)
 
 # #### Electric Functionality
 
-# In[ ]:
+# In[42]:
 
 
 elec_ntwk_id = '60e5e326544e944c3ce37a93'
@@ -1841,7 +1874,7 @@ plot_gdf_map(bldg_df, column='elec_avg', vmin=0, vmax=1, cmap='magma', s=4)
 
 # #### Transportation Functionality
 
-# In[ ]:
+# In[43]:
 
 
 # defining trans ID's
@@ -1894,7 +1927,7 @@ plot_gdf_map(bldg_df, column='trns_avg', vmin=0, vmax=1, cmap='magma', s=4)
 
 # #### Water Functionality
 
-# In[ ]:
+# In[44]:
 
 
 wter_ntwk_id = '60e72f9fd3c92a78c89636c7'
@@ -1948,7 +1981,7 @@ plot_gdf_map(bldg_df, column='wter_avg', vmin=0, vmax=1, cmap='magma', s=4)
 
 # #### Getting building failure results
 
-# In[ ]:
+# In[45]:
 
 
 bldg_dataset_id = "613ba5ef5d3b1d6461e8c415"        # defining building dataset (GIS point layer)
@@ -1962,7 +1995,7 @@ df_bldg_fail.head()
 
 # #### Capital Shock Analysis
 
-# In[ ]:
+# In[46]:
 
 
 building_failure_probability = mc_bldg.get_output_dataset('failure_probability')  # get buildings failure probabilities
@@ -1971,7 +2004,8 @@ building_failure_probability = mc_bldg.get_output_dataset('failure_probability')
 capital_shocks = CapitalShocks(client)
 
 # Specify the result name
-result_name = "Seaside capital losses"
+
+result_name = os.path.join(path_to_output, "Seaside capital losses")
 
 # Set analysis parameters
 capital_shocks.set_parameter("result_name", result_name)
@@ -1996,7 +2030,7 @@ capital_shocks.run_analysis()
 
 # #### Showings results from capital shock
 
-# In[ ]:
+# In[47]:
 
 
 sector_shocks_result = capital_shocks.get_output_dataset("sector_shocks")
@@ -2006,7 +2040,7 @@ df
 
 # #### Running CGE
 
-# In[ ]:
+# In[48]:
 
 
 """ 
@@ -2025,7 +2059,7 @@ BB = "603d23d634f29a7fa41c4c4e"
 # MISC TABLES
 EMPLOY = "5f173c97c98cf43417c8955d" # Table name containing data for commercial sector employment.
 JOBCR = "5f173d262fab4d660a8e9f9c" # This is a matrix describing the supply of workers coming from each household group in the economy.
-HHTABLE = "5f173d6bc98cf43417c89561" # HH Table?
+HHTABLE = "5f173d6bc98cf43417c89561" # HH Table
 SIMS = "5f174211c98cf43417c89565" # Random numbers for the change of capital stocks in the CGE model.
 
 
@@ -2046,7 +2080,7 @@ seaside_cge.set_input_dataset("sector_shocks", sector_shocks_result)
 seaside_cge.run_analysis()
 
 
-# In[ ]:
+# In[49]:
 
 
 # A dataset containing Seaside cge simulations (format: CSV).
@@ -2062,7 +2096,7 @@ df_fp
 # Using the population dislocation module in pyIncore to determine whether households are dislocated. Chains results from cumulative building damage and housing unit allocation with the population dislocation method.
 # 
 
-# In[ ]:
+# In[50]:
 
 
 pop_dis = PopulationDislocation(client)
@@ -2109,7 +2143,7 @@ PopDis_df['dislocated']
 
 # **Plotting results from population dislocation analysis**
 
-# In[ ]:
+# In[51]:
 
 
 plot_gdf_map(bldg_df, column='dislocated', category=True, cmap='coolwarm', s=3)
@@ -2117,7 +2151,7 @@ plot_gdf_map(bldg_df, column='dislocated', category=True, cmap='coolwarm', s=3)
 
 # **Showing table of results from CGE analysis**
 
-# In[ ]:
+# In[52]:
 
 
 # A dataset of changes in employment and supply. (format: CSV).
@@ -2139,7 +2173,7 @@ df_fpp
 # 
 # This section of the code loops through the previous section; however, the functionality is modified based on the time in days after the CSZ occurs.
 
-# In[ ]:
+# In[53]:
 
 
 start = 0
@@ -2152,7 +2186,7 @@ if save_days[0] == 0:
 
 # #### Electric Recovery
 
-# In[ ]:
+# In[54]:
 
 
 elec_ntwk_id = '60e5e326544e944c3ce37a93'
@@ -2196,7 +2230,7 @@ ax.set_ylabel('Number of Parcels with Electricity')
 
 # #### Transportation Recovery
 
-# In[ ]:
+# In[55]:
 
 
 # defining trans ID's
@@ -2265,7 +2299,7 @@ ax.set_ylabel('Number of Parcels with Transportation Func. Above {}' .format(trn
 
 # #### Water Recovery
 
-# In[ ]:
+# In[56]:
 
 
 wter_ntwk_id = '60e72f9fd3c92a78c89636c7'

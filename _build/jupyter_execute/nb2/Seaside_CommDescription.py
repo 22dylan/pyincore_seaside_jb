@@ -61,54 +61,58 @@ data_service = DataService(client)
 
 # ## 1a) Built enviroment: Building Inventory
 # 
-# The building inventory for Joplin consists of...
+# The building inventory for Seaside consists of 4,679 parcels
 
 # In[6]:
 
 
 # Temporary Seaside, OR Building Inventory v6
-building_inv = Dataset.from_file("IN-CORE_Seaside_BuildingInventory_2021-03-19.shp", data_type='ergo:buildingInventoryVer6')
+# building_inv = Dataset.from_file("IN-CORE_Seaside_BuildingInventory_2021-03-19.shp", data_type='ergo:buildingInventoryVer6')
+bldg_dataset_id = "613ba5ef5d3b1d6461e8c415"        # defining building dataset (GIS point layer)
+building_inv = Dataset.from_data_service(bldg_dataset_id, data_service)
 
 
 # In[7]:
 
 
-bldg_inv_gdf = gpd.read_file("IN-CORE_Seaside_BuildingInventory_2021-03-19.shp")
+bldg_inv_gdf = building_inv.get_dataframe_from_shapefile()
+
+# bldg_inv_gdf = gpd.read_file("IN-CORE_Seaside_BuildingInventory_2021-03-19.shp")
 bldg_inv_gdf.head()
 
 
-# In[ ]:
+# In[8]:
 
 
 bldg_inv_gdf.columns
 
 
-# In[ ]:
+# In[9]:
 
 
 bldg_inv_gdf[['guid','strctid','struct_typ','struct_typ','year_built','occ_type']].head()
 
 
-# In[ ]:
+# In[10]:
 
 
 bldg_inv_gdf['strctid'].describe()
 
 
-# In[ ]:
+# In[11]:
 
 
 bldg_inv_gdf[['guid','strctid','struct_typ','year_built','occ_type']].groupby('struct_typ').count()
 
 
-# In[ ]:
+# In[12]:
 
 
 map = viz.plot_gdf_map(bldg_inv_gdf,column='struct_typ')
 map
 
 
-# In[ ]:
+# In[13]:
 
 
 bldg_inv_gdf
@@ -121,7 +125,7 @@ bldg_inv_gdf
 # >Rosenheim, Nathanael, Roberto Guidotti, Paolo Gardoni & Walter Gillis Peacock. (2019). Integration of detailed household and housing unit characteristic data with critical infrastructure for post-hazard resilience modeling. Sustainable and Resilient Infrastructure. doi.org/10.1080/23789689.2019.1681821
 # 
 
-# In[ ]:
+# In[14]:
 
 
 # Seaside Housing Unit Inventory
@@ -132,14 +136,14 @@ filename = housing_unit_inv.get_file_path('csv')
 print("The IN-CORE Dataservice has saved the Housing Unit Inventory on your local machine: "+filename)
 
 
-# In[ ]:
+# In[15]:
 
 
 housing_unit_inv_df = pd.read_csv(filename, header="infer")
 housing_unit_inv_df.head()
 
 
-# In[ ]:
+# In[16]:
 
 
 housing_unit_inv_df.columns
@@ -151,7 +155,7 @@ housing_unit_inv_df.columns
 # ### Race and Ethnicity
 # The housing unit inventory includes variables for race and ethnicity.
 
-# In[ ]:
+# In[17]:
 
 
 housing_unit_inv_df['Race Ethnicity'] = "0 Vacant HU No Race Ethnicity Data"
@@ -172,7 +176,7 @@ housing_unit_inv_df.loc[(housing_unit_inv_df['ownershp'] == 2),'Tenure Status'] 
 housing_unit_inv_df['Tenure Status'].notes = "Identify Tenure Status Housing Unit Characteristics."
 
 
-# In[ ]:
+# In[18]:
 
 
 table = pd.pivot_table(housing_unit_inv_df, values='numprec', index=['Race Ethnicity'],
@@ -204,7 +208,7 @@ table.style.set_caption(table_title).format(varformat)
 
 # The bulding and housing unit inventories have already by loaded. The address point inventory is needed to link the population with the structures.
 
-# In[ ]:
+# In[19]:
 
 
 # Housing unit and Building Inventories have been loaded
@@ -212,7 +216,7 @@ table.style.set_caption(table_title).format(varformat)
 address_point_inv_id = "5d542fefb9219c0689b981fb"
 
 
-# In[ ]:
+# In[20]:
 
 
 from pyincore.analyses.housingunitallocation import HousingUnitAllocation
@@ -238,7 +242,7 @@ hua.set_parameter("seed", seed)
 hua.set_parameter("iterations", iterations)
 
 
-# In[ ]:
+# In[21]:
 
 
 # Run Housing unit allocation analysis
@@ -247,7 +251,7 @@ hua.run_analysis()
 
 # ### Explore results from Housing Unit Allocation
 
-# In[ ]:
+# In[22]:
 
 
 # Retrieve result dataset
@@ -260,38 +264,38 @@ hua_df = hua_result.get_dataframe_from_csv(low_memory=False)
 hua_df[['guid','numprec','ownershp','geometry','aphumerge']].head()
 
 
-# In[ ]:
+# In[23]:
 
 
 hua_df.guid.describe()
 
 
-# In[ ]:
+# In[24]:
 
 
 hua_df.huid.describe()
 
 
-# In[ ]:
+# In[25]:
 
 
 hua_df.columns
 
 
-# In[ ]:
+# In[26]:
 
 
 # keep observations where the housing unit characteristics have been allocated to a structure.
 hua_df = hua_df.dropna(subset=['guid'])
 
 
-# In[ ]:
+# In[27]:
 
 
 hua_df.huid.describe()
 
 
-# In[ ]:
+# In[28]:
 
 
 hua_df['Race Ethnicity'] = "0 Vacant HU No Race Ethnicity Data"
@@ -312,7 +316,7 @@ hua_df.loc[(hua_df['ownershp'] == 2),'Tenure Status'] = "2 Renter Occupied"
 hua_df['Tenure Status'].notes = "Identify Tenure Status Housing Unit Characteristics."
 
 
-# In[ ]:
+# In[29]:
 
 
 table = pd.pivot_table(hua_df, values='numprec', index=['Race Ethnicity'],
@@ -338,7 +342,7 @@ table.style.set_caption(table_title).format(varformat)
 # 
 # The housing unit allocation, plus the building results will become the input for the social science models such as the population dislocatoin model.
 
-# In[ ]:
+# In[30]:
 
 
 # Use shapely.wkt loads to convert WKT to GeoSeries
@@ -351,7 +355,7 @@ hua_gdf = gpd.GeoDataFrame(
 hua_gdf[['guid','x','y','ownershp','geometry']].head(6)
 
 
-# In[ ]:
+# In[31]:
 
 
 # visualize population
@@ -360,7 +364,7 @@ map = viz.plot_gdf_map(gdf,column='ownershp')
 map
 
 
-# In[ ]:
+# In[32]:
 
 
 # visualize population by race and tenure status
@@ -370,7 +374,7 @@ map = viz.plot_gdf_map(minority_renters_gdf,column='race')
 map
 
 
-# In[ ]:
+# In[33]:
 
 
 # What location should the map be centered on?
@@ -379,7 +383,7 @@ center_y = hua_gdf.bounds.miny.mean()
 center_x, center_y
 
 
-# In[ ]:
+# In[34]:
 
 
 # https://ipyleaflet.readthedocs.io/en/latest/api_reference/heatmap.html
@@ -387,19 +391,19 @@ import ipyleaflet as ipylft
 from ipyleaflet import Map, Heatmap
 
 
-# In[ ]:
+# In[35]:
 
 
 print("ipyleaflet Version ",ipylft.__version__)
 
 
-# In[ ]:
+# In[36]:
 
 
 popdata = minority_renters_gdf[['y','x','numprec']].values.tolist()
 
 
-# In[ ]:
+# In[37]:
 
 
 from ipyleaflet import Map, Heatmap, LayersControl
@@ -419,4 +423,10 @@ map.add_layer(minority_renters_gdf);
 control = LayersControl(position='topright')
 map.add_control(control)
 map
+
+
+# In[ ]:
+
+
+
 

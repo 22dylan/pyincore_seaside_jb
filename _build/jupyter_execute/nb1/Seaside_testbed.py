@@ -43,7 +43,7 @@
 # + **CumulativeBuildingDamage**: Combines the results of earthquake and tsunami building damage analysis to compute the multi-hazard damages
 # + **MonteCarloFailureProbability**: Computes the failure probability of each building.
 
-# In[ ]:
+# In[1]:
 
 
 from pyincore import IncoreClient, Dataset, FragilityService, MappingSet, DataService
@@ -76,7 +76,7 @@ client = IncoreClient()
 # ### 3.1. Earthquake building damage
 # Defining earthquake hazard IDs:
 
-# In[ ]:
+# In[2]:
 
 
 hazard_type = "earthquake"
@@ -92,7 +92,7 @@ rt_hazard_dict = {100: "5dfa4058b9219c934b64d495",
 
 # Looping through each recurrence interval to determine the probability of being in each damage state using pyIncore's **BuildingDamage** module.
 
-# In[ ]:
+# In[3]:
 
 
 bldg_eq_dmg_result_list = []  # place holder to saving earthquake building damage result iteration
@@ -123,7 +123,7 @@ for rt_val in rt:                                       # loop through recurrenc
 # ### 3.2.Tsunami Building Damage
 # Repeating the above analysis for the tsunami
 
-# In[ ]:
+# In[4]:
 
 
 hazard_type = "tsunami"
@@ -137,7 +137,7 @@ rt_hazard_dict = {100: "5bc9e25ef7b08533c7e610dc",
                   10000: "5d27b986b9219c3c55ad37d0"}
 
 
-# In[ ]:
+# In[5]:
 
 
 bldg_tsu_dmg_result_list = []   # place holder to saving tsunami building damage result iteration
@@ -166,7 +166,7 @@ for rt_val in rt:
 # ### 3.3. Multi-hazard Building Damage
 # This part of the notebook uses the output from the above earthquake and tsunami building damages to compute the multi-hazard building damages. The pyIncore module **CumulativeBuildingDamage** is utilized.
 
-# In[ ]:
+# In[6]:
 
 
 cumulative_bldg_dmg_result_list = []   # place holder to saving cumulating building damage result iteration
@@ -194,7 +194,7 @@ for index, rt_val in enumerate(rt):                                           # 
 # ### 3.4. Monte Carlo Building Failure
 # This part of the notebook uses the output from the: (1) earthquake, (2) tsunami, and (3) multi-hazard damage analysis to determine building failure. Monte Carlo sampling of the damage state probabilities are implemented to determine the probability of failure. Here, a building is considered failed if it has a damage state of moderate, heavy, or complete. The pyIncore module **MonteCarloFailureProbability** is utilized. 
 
-# In[ ]:
+# In[7]:
 
 
 mc_bldg_eq_dmg_result_list = []        # place holder to saving mc earthquake building damage result iteration
@@ -256,7 +256,7 @@ for index, rt_val in enumerate(rt):
 # 
 # Each row corresponds to a building. The column "guid" is a unique identifier. 
 
-# In[ ]:
+# In[8]:
 
 
 data_eq_store = pd.DataFrame()
@@ -308,7 +308,7 @@ data_cumulative_store[failure_keys].head()
 
 # ### 4.1. Plotting histograms of failure probabilities
 
-# In[ ]:
+# In[9]:
 
 
 fig, ax = plt.subplots(3, 3, figsize=(12, 8))
@@ -348,7 +348,7 @@ ax[2,2].set_xlabel('Failure Probability')
 
 # ### 4.2. Computing expected economic losses
 
-# In[ ]:
+# In[10]:
 
 
 damage_factor_mean = [0.005, 0.155, 0.55, 0.90]  # from MAEVIS documentation
@@ -416,7 +416,7 @@ ax.grid(which='major', alpha=0.40, color = 'k', ls = '--')
 # ### 4.3. Computing expected economic risks
 # Risks are defined as losses times probability of occurrence (or the inverserse of the return period). With economic risks, one can isolate events that result in both large economic losses, as well as have a high probability of occurrence. 
 
-# In[ ]:
+# In[11]:
 
 
 fig, ax = plt.subplots(1,1, figsize=(12,8))
@@ -442,7 +442,7 @@ ax.grid(which='major', alpha=0.40, color = 'k', ls = '--')
 #     
 # The below shows the results of the failure probabilities geospatially. The user selects the output file that is viewed, then selects "Generate Map". Each building is then color coded according to the failure probabilities from the MC results. 
 
-# In[ ]:
+# In[12]:
 
 
 # showing mc earthquake building damage result
@@ -450,7 +450,7 @@ m = viz.plot_table_dataset_list_from_single_source(client, mc_bldg_eq_dmg_result
 m            # showing maps in notebook
 
 
-# In[ ]:
+# In[14]:
 
 
 # showing mc tsunami building damage result
@@ -458,10 +458,16 @@ m = viz.plot_table_dataset_list_from_single_source(client, mc_bldg_tsu_dmg_resul
 m
 
 
-# In[ ]:
+# In[13]:
 
 
 # showing mc cumulative building damage result
 m = viz.plot_table_dataset_list_from_single_source(client, mc_bldg_cumul_dmg_result_list, 'failure_probability', '5d927ab2b9219c06ae8d313c')
 m
+
+
+# In[ ]:
+
+
+
 

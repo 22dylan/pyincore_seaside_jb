@@ -322,7 +322,7 @@ numpy version:  1.21.2
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/Users/dylan/Box/OSu/models/pyincore_seaside_jb/nb2&#39;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/Users/dylan/Box/OSU/models/pyincore_seaside_jb/nb2&#39;
 </pre></div>
 </div>
 </div>
@@ -352,78 +352,216 @@ numpy version:  1.21.2
 </div>
 <div class="section" id="a-built-enviroment-building-inventory">
 <h2>1a) Built enviroment: Building Inventory<a class="headerlink" href="#a-built-enviroment-building-inventory" title="Permalink to this headline">¶</a></h2>
-<p>The building inventory for Joplin consists of…</p>
+<p>The building inventory for Seaside consists of 4,679 parcels</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Temporary Seaside, OR Building Inventory v6</span>
-<span class="n">building_inv</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;IN-CORE_Seaside_BuildingInventory_2021-03-19.shp&quot;</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;ergo:buildingInventoryVer6&#39;</span><span class="p">)</span>
+<span class="c1"># building_inv = Dataset.from_file(&quot;IN-CORE_Seaside_BuildingInventory_2021-03-19.shp&quot;, data_type=&#39;ergo:buildingInventoryVer6&#39;)</span>
+<span class="n">bldg_dataset_id</span> <span class="o">=</span> <span class="s2">&quot;613ba5ef5d3b1d6461e8c415&quot;</span>        <span class="c1"># defining building dataset (GIS point layer)</span>
+<span class="n">building_inv</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_data_service</span><span class="p">(</span><span class="n">bldg_dataset_id</span><span class="p">,</span> <span class="n">data_service</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bldg_inv_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">&quot;IN-CORE_Seaside_BuildingInventory_2021-03-19.shp&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bldg_inv_gdf</span> <span class="o">=</span> <span class="n">building_inv</span><span class="o">.</span><span class="n">get_dataframe_from_shapefile</span><span class="p">()</span>
+
+<span class="c1"># bldg_inv_gdf = gpd.read_file(&quot;IN-CORE_Seaside_BuildingInventory_2021-03-19.shp&quot;)</span>
 <span class="n">bldg_inv_gdf</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">CPLE_OpenFailedError</span><span class="g g-Whitespace">                      </span>Traceback (most recent call last)
-<span class="nn">fiona/_shim.pyx</span> in <span class="ni">fiona._shim.gdal_open_vector</span><span class="nt">()</span>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="nn">fiona/_err.pyx</span> in <span class="ni">fiona._err.exc_wrap_pointer</span><span class="nt">()</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class="ne">CPLE_OpenFailedError</span>: IN-CORE_Seaside_BuildingInventory_2021-03-19.shp: No such file or directory
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">DriverError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="mi">94</span><span class="n">d0384ffad8</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">bldg_inv_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">&quot;IN-CORE_Seaside_BuildingInventory_2021-03-19.shp&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">bldg_inv_gdf</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-
-<span class="nn">/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/geopandas/io/file.py</span> in <span class="ni">_read_file</span><span class="nt">(filename, bbox, mask, rows, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">158</span> 
-<span class="g g-Whitespace">    </span><span class="mi">159</span>     <span class="k">with</span> <span class="n">fiona_env</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">160</span>         <span class="k">with</span> <span class="n">reader</span><span class="p">(</span><span class="n">path_or_bytes</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">features</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">161</span> 
-<span class="g g-Whitespace">    </span><span class="mi">162</span>             <span class="c1"># In a future Fiona release the crs attribute of features will</span>
-
-<span class="nn">/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/fiona/env.py</span> in <span class="ni">wrapper</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">406</span>     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">407</span>         <span class="k">if</span> <span class="n">local</span><span class="o">.</span><span class="n">_env</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">408</span>             <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">409</span>         <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">410</span>             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-
-<span class="nn">/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/fiona/__init__.py</span> in <span class="ni">open</span><span class="nt">(fp, mode, driver, schema, crs, encoding, layer, vfs, enabled_drivers, crs_wkt, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">255</span>         <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">256</span>             <span class="n">c</span> <span class="o">=</span> <span class="n">Collection</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="n">driver</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span>
-<span class="ne">--&gt; </span><span class="mi">257</span>                            <span class="n">layer</span><span class="o">=</span><span class="n">layer</span><span class="p">,</span> <span class="n">enabled_drivers</span><span class="o">=</span><span class="n">enabled_drivers</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">258</span>         <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">259</span>             <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
-
-<span class="nn">/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/fiona/collection.py</span> in <span class="ni">__init__</span><span class="nt">(self, path, mode, driver, schema, crs, encoding, layer, vsi, archive, enabled_drivers, crs_wkt, ignore_fields, ignore_geometry, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">160</span>             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">161</span>                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">162</span>                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">163</span>             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">164</span>                 <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">WritingSession</span><span class="p">()</span>
-
-<span class="nn">fiona/ogrext.pyx</span> in <span class="ni">fiona.ogrext.Session.start</span><span class="nt">()</span>
-
-<span class="nn">fiona/_shim.pyx</span> in <span class="ni">fiona._shim.gdal_open_vector</span><span class="nt">()</span>
-
-<span class="ne">DriverError</span>: IN-CORE_Seaside_BuildingInventory_2021-03-19.shp: No such file or directory
-</pre></div>
-</div>
-</div>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>parid</th>
+      <th>parid_card</th>
+      <th>bldg_id</th>
+      <th>struct_typ</th>
+      <th>str_prob</th>
+      <th>year_built</th>
+      <th>no_stories</th>
+      <th>a_stories</th>
+      <th>b_stories</th>
+      <th>bsmt_type</th>
+      <th>...</th>
+      <th>guid</th>
+      <th>FID_NEW</th>
+      <th>origin</th>
+      <th>stat_class</th>
+      <th>rmv_improv</th>
+      <th>rmv_land</th>
+      <th>elev</th>
+      <th>period</th>
+      <th>strctid</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1968</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>fba4c73f-9b1b-4942-b7fb-bc276a4e0a4e</td>
+      <td>5783</td>
+      <td>1</td>
+      <td>193</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.037119</td>
+      <td>0.35</td>
+      <td>41007020933038031S</td>
+      <td>POINT (-123.90900 46.01433)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1992</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>65d6e370-c05b-4b2f-bd17-d914d1d056c7</td>
+      <td>5782</td>
+      <td>1</td>
+      <td>193</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-14.826966</td>
+      <td>0.35</td>
+      <td>41007022416079053S</td>
+      <td>POINT (-123.90585 45.99795)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1974</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>dad76485-9694-409e-ac7f-c64c7bd5c32c</td>
+      <td>5781</td>
+      <td>1</td>
+      <td>191</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.037119</td>
+      <td>0.35</td>
+      <td>41007020933038014S</td>
+      <td>POINT (-123.90900 46.01433)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1984</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>6f57cfb6-d244-40d5-96f5-03aeddd5e30a</td>
+      <td>5780</td>
+      <td>1</td>
+      <td>193</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.037119</td>
+      <td>0.35</td>
+      <td>41007020933038018S</td>
+      <td>POINT (-123.90900 46.01433)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1964</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>929f1040-6224-409d-b4e3-58946daf3b91</td>
+      <td>5779</td>
+      <td>1</td>
+      <td>190</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.729172</td>
+      <td>0.35</td>
+      <td>41007022789002002S</td>
+      <td>POINT (-123.91183 45.99747)</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 38 columns</p>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bldg_inv_gdf</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;parid&#39;, &#39;parid_card&#39;, &#39;bldg_id&#39;, &#39;struct_typ&#39;, &#39;str_prob&#39;,
+       &#39;year_built&#39;, &#39;no_stories&#39;, &#39;a_stories&#39;, &#39;b_stories&#39;, &#39;bsmt_type&#39;,
+       &#39;sq_foot&#39;, &#39;gsq_foot&#39;, &#39;occ_type&#39;, &#39;occ_detail&#39;, &#39;major_occ&#39;,
+       &#39;broad_occ&#39;, &#39;appr_bldg&#39;, &#39;repl_cst&#39;, &#39;str_cst&#39;, &#39;nstra_cst&#39;,
+       &#39;nstrd_cst&#39;, &#39;dgn_lvl&#39;, &#39;cont_val&#39;, &#39;efacility&#39;, &#39;dwell_unit&#39;,
+       &#39;str_typ2&#39;, &#39;occ_typ2&#39;, &#39;tract_id&#39;, &#39;guid&#39;, &#39;FID_NEW&#39;, &#39;origin&#39;,
+       &#39;stat_class&#39;, &#39;rmv_improv&#39;, &#39;rmv_land&#39;, &#39;elev&#39;, &#39;period&#39;, &#39;strctid&#39;,
+       &#39;geometry&#39;],
+      dtype=&#39;object&#39;)
 </pre></div>
 </div>
 </div>
@@ -434,10 +572,95 @@ numpy version:  1.21.2
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>guid</th>
+      <th>strctid</th>
+      <th>struct_typ</th>
+      <th>struct_typ</th>
+      <th>year_built</th>
+      <th>occ_type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>fba4c73f-9b1b-4942-b7fb-bc276a4e0a4e</td>
+      <td>41007020933038031S</td>
+      <td>W1</td>
+      <td>W1</td>
+      <td>1968</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>65d6e370-c05b-4b2f-bd17-d914d1d056c7</td>
+      <td>41007022416079053S</td>
+      <td>W1</td>
+      <td>W1</td>
+      <td>1992</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>dad76485-9694-409e-ac7f-c64c7bd5c32c</td>
+      <td>41007020933038014S</td>
+      <td>W1</td>
+      <td>W1</td>
+      <td>1974</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6f57cfb6-d244-40d5-96f5-03aeddd5e30a</td>
+      <td>41007020933038018S</td>
+      <td>W1</td>
+      <td>W1</td>
+      <td>1984</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>929f1040-6224-409d-b4e3-58946daf3b91</td>
+      <td>41007022789002002S</td>
+      <td>W1</td>
+      <td>W1</td>
+      <td>1964</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bldg_inv_gdf</span><span class="p">[</span><span class="s1">&#39;strctid&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count                   4679
+unique                  4679
+top       41007020933038031S
+freq                       1
+Name: strctid, dtype: object
 </pre></div>
 </div>
 </div>
@@ -448,6 +671,63 @@ numpy version:  1.21.2
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>guid</th>
+      <th>strctid</th>
+      <th>year_built</th>
+      <th>occ_type</th>
+    </tr>
+    <tr>
+      <th>struct_typ</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>RC</th>
+      <td>1504</td>
+      <td>1504</td>
+      <td>1504</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>W1</th>
+      <td>2444</td>
+      <td>2444</td>
+      <td>2444</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>W2</th>
+      <td>731</td>
+      <td>731</td>
+      <td>731</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -456,6 +736,9 @@ numpy version:  1.21.2
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/Seaside_CommDescription_16_0.png" src="../_images/Seaside_CommDescription_16_0.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -463,6 +746,317 @@ numpy version:  1.21.2
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>parid</th>
+      <th>parid_card</th>
+      <th>bldg_id</th>
+      <th>struct_typ</th>
+      <th>str_prob</th>
+      <th>year_built</th>
+      <th>no_stories</th>
+      <th>a_stories</th>
+      <th>b_stories</th>
+      <th>bsmt_type</th>
+      <th>...</th>
+      <th>guid</th>
+      <th>FID_NEW</th>
+      <th>origin</th>
+      <th>stat_class</th>
+      <th>rmv_improv</th>
+      <th>rmv_land</th>
+      <th>elev</th>
+      <th>period</th>
+      <th>strctid</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1968</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>fba4c73f-9b1b-4942-b7fb-bc276a4e0a4e</td>
+      <td>5783</td>
+      <td>1</td>
+      <td>193</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.037119</td>
+      <td>0.35</td>
+      <td>41007020933038031S</td>
+      <td>POINT (-123.90900 46.01433)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1992</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>65d6e370-c05b-4b2f-bd17-d914d1d056c7</td>
+      <td>5782</td>
+      <td>1</td>
+      <td>193</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-14.826966</td>
+      <td>0.35</td>
+      <td>41007022416079053S</td>
+      <td>POINT (-123.90585 45.99795)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1974</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>dad76485-9694-409e-ac7f-c64c7bd5c32c</td>
+      <td>5781</td>
+      <td>1</td>
+      <td>191</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.037119</td>
+      <td>0.35</td>
+      <td>41007020933038014S</td>
+      <td>POINT (-123.90900 46.01433)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1984</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>6f57cfb6-d244-40d5-96f5-03aeddd5e30a</td>
+      <td>5780</td>
+      <td>1</td>
+      <td>193</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.037119</td>
+      <td>0.35</td>
+      <td>41007020933038018S</td>
+      <td>POINT (-123.90900 46.01433)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1964</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>929f1040-6224-409d-b4e3-58946daf3b91</td>
+      <td>5779</td>
+      <td>1</td>
+      <td>190</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>-1.729172</td>
+      <td>0.35</td>
+      <td>41007022789002002S</td>
+      <td>POINT (-123.91183 45.99747)</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>4674</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>RC</td>
+      <td>None</td>
+      <td>0</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>6b0688f7-c132-4330-9c21-1585dd85c72d</td>
+      <td>7</td>
+      <td>1</td>
+      <td>790</td>
+      <td>0.0</td>
+      <td>189960.0</td>
+      <td>-1.657575</td>
+      <td>0.40</td>
+      <td>6b0688f7-c132-4330-9c21-1585dd85c72d</td>
+      <td>POINT (-123.90927 46.01745)</td>
+    </tr>
+    <tr>
+      <th>4675</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1940</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>463b4421-253b-457e-bb5c-3175c1f02c1d</td>
+      <td>6</td>
+      <td>1</td>
+      <td>123</td>
+      <td>33704.0</td>
+      <td>0.0</td>
+      <td>-2.180728</td>
+      <td>0.35</td>
+      <td>41007020853008007S</td>
+      <td>POINT (-123.91364 46.01733)</td>
+    </tr>
+    <tr>
+      <th>4676</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W2</td>
+      <td>None</td>
+      <td>1981</td>
+      <td>2</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>4a77a5a2-22c7-468f-be8e-3de39fed3a85</td>
+      <td>5</td>
+      <td>1</td>
+      <td>177</td>
+      <td>1115868.0</td>
+      <td>1259201.0</td>
+      <td>-0.852036</td>
+      <td>0.40</td>
+      <td>4a77a5a2-22c7-468f-be8e-3de39fed3a85</td>
+      <td>POINT (-123.91612 46.01746)</td>
+    </tr>
+    <tr>
+      <th>4677</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>W1</td>
+      <td>None</td>
+      <td>1936</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>04819c03-9e77-4a0e-96b7-5f9ef5067351</td>
+      <td>4</td>
+      <td>1</td>
+      <td>142</td>
+      <td>305479.0</td>
+      <td>1674127.0</td>
+      <td>-0.549215</td>
+      <td>0.35</td>
+      <td>41007020802001001S</td>
+      <td>POINT (-123.91862 46.01757)</td>
+    </tr>
+    <tr>
+      <th>4678</th>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>RC</td>
+      <td>None</td>
+      <td>1996</td>
+      <td>1</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>...</td>
+      <td>fb1d7564-a6cc-46de-8052-d2f088d0c1b5</td>
+      <td>2</td>
+      <td>1</td>
+      <td>790</td>
+      <td>49483.0</td>
+      <td>123901.0</td>
+      <td>-2.376883</td>
+      <td>0.40</td>
+      <td>fb1d7564-a6cc-46de-8052-d2f088d0c1b5</td>
+      <td>POINT (-123.91014 46.01755)</td>
+    </tr>
+  </tbody>
+</table>
+<p>4679 rows × 38 columns</p>
+</div></div></div>
 </div>
 </div>
 <div class="section" id="b-social-systems-housing-unit-inventory">
@@ -483,6 +1077,13 @@ For more information see:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+The IN-CORE Dataservice has saved the Housing Unit Inventory on your local machine: /Users/dylan/.incore/cache_data/5d543087b9219c0689b98234/IN-CORE_1bv6_SetupSeaside_FourInventories_2019-08-02_HUinventory/IN-CORE_1bv6_SetupSeaside_FourInventories_2019-08-02_HUinventory.csv
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -491,10 +1092,123 @@ For more information see:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>blockid</th>
+      <th>blockidstr</th>
+      <th>huid</th>
+      <th>livetype</th>
+      <th>numprec</th>
+      <th>ownershp</th>
+      <th>race</th>
+      <th>hispan</th>
+      <th>vacancy</th>
+      <th>gqtype</th>
+      <th>bgid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>410079501001001</td>
+      <td>B410079501001001</td>
+      <td>B410079501001001H001</td>
+      <td>H</td>
+      <td>2</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>410079501001</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>410079501001001</td>
+      <td>B410079501001001</td>
+      <td>B410079501001001H002</td>
+      <td>H</td>
+      <td>2</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>410079501001</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>410079501001001</td>
+      <td>B410079501001001</td>
+      <td>B410079501001001H003</td>
+      <td>H</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>410079501001</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>410079501001003</td>
+      <td>B410079501001003</td>
+      <td>B410079501001003H001</td>
+      <td>H</td>
+      <td>4</td>
+      <td>2.0</td>
+      <td>4.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>410079501001</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>410079501001003</td>
+      <td>B410079501001003</td>
+      <td>B410079501001003H002</td>
+      <td>H</td>
+      <td>1</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>410079501001</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">housing_unit_inv_df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;blockid&#39;, &#39;blockidstr&#39;, &#39;huid&#39;, &#39;livetype&#39;, &#39;numprec&#39;, &#39;ownershp&#39;,
+       &#39;race&#39;, &#39;hispan&#39;, &#39;vacancy&#39;, &#39;gqtype&#39;, &#39;bgid&#39;],
+      dtype=&#39;object&#39;)
 </pre></div>
 </div>
 </div>
@@ -542,6 +1256,84 @@ For more information see:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_143ec_">
+  <caption>Table 1. Total Population by Race, Ethncity, and Tenure Status, Jefferson and Newton Counties, 2010.</caption>
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th class="col_heading level0 col0" colspan="4"></th>
+    </tr>
+    <tr>
+      <th class="index_name level1" >Tenure Status</th>
+      <th class="col_heading level1 col0" >0 No Tenure Status</th>
+      <th class="col_heading level1 col1" >1 Owner Occupied</th>
+      <th class="col_heading level1 col2" >2 Renter Occupied</th>
+      <th class="col_heading level1 col3" >Total Population</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Race Ethnicity</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_143ec_level0_row0" class="row_heading level0 row0" >0 Vacant HU No Race Ethnicity Data</th>
+      <td id="T_143ec_row0_col0" class="data row0 col0" >0.000000</td>
+      <td id="T_143ec_row0_col1" class="data row0 col1" >nan</td>
+      <td id="T_143ec_row0_col2" class="data row0 col2" >nan</td>
+      <td id="T_143ec_row0_col3" class="data row0 col3" >0</td>
+    </tr>
+    <tr>
+      <th id="T_143ec_level0_row1" class="row_heading level0 row1" >1 White alone, Not Hispanic</th>
+      <td id="T_143ec_row1_col0" class="data row1 col0" >nan</td>
+      <td id="T_143ec_row1_col1" class="data row1 col1" >21,017</td>
+      <td id="T_143ec_row1_col2" class="data row1 col2" >11,027</td>
+      <td id="T_143ec_row1_col3" class="data row1 col3" >32,044</td>
+    </tr>
+    <tr>
+      <th id="T_143ec_level0_row2" class="row_heading level0 row2" >2 Black alone, Not Hispanic</th>
+      <td id="T_143ec_row2_col0" class="data row2 col0" >nan</td>
+      <td id="T_143ec_row2_col1" class="data row2 col1" >55</td>
+      <td id="T_143ec_row2_col2" class="data row2 col2" >48</td>
+      <td id="T_143ec_row2_col3" class="data row2 col3" >103</td>
+    </tr>
+    <tr>
+      <th id="T_143ec_level0_row3" class="row_heading level0 row3" >3 Other Race, Not Hispanic</th>
+      <td id="T_143ec_row3_col0" class="data row3 col0" >nan</td>
+      <td id="T_143ec_row3_col1" class="data row3 col1" >765</td>
+      <td id="T_143ec_row3_col2" class="data row3 col2" >786</td>
+      <td id="T_143ec_row3_col3" class="data row3 col3" >1,551</td>
+    </tr>
+    <tr>
+      <th id="T_143ec_level0_row4" class="row_heading level0 row4" >4 Any Race, Hispanic</th>
+      <td id="T_143ec_row4_col0" class="data row4 col0" >nan</td>
+      <td id="T_143ec_row4_col1" class="data row4 col1" >595</td>
+      <td id="T_143ec_row4_col2" class="data row4 col2" >1,645</td>
+      <td id="T_143ec_row4_col3" class="data row4 col3" >2,240</td>
+    </tr>
+    <tr>
+      <th id="T_143ec_level0_row5" class="row_heading level0 row5" >5 Group Quarters no Race Ethnicity Data</th>
+      <td id="T_143ec_row5_col0" class="data row5 col0" >956.000000</td>
+      <td id="T_143ec_row5_col1" class="data row5 col1" >nan</td>
+      <td id="T_143ec_row5_col2" class="data row5 col2" >nan</td>
+      <td id="T_143ec_row5_col3" class="data row5 col3" >956</td>
+    </tr>
+    <tr>
+      <th id="T_143ec_level0_row6" class="row_heading level0 row6" >Total</th>
+      <td id="T_143ec_row6_col0" class="data row6 col0" >956.000000</td>
+      <td id="T_143ec_row6_col1" class="data row6 col1" >22,432</td>
+      <td id="T_143ec_row6_col2" class="data row6 col2" >13,506</td>
+      <td id="T_143ec_row6_col3" class="data row6 col3" >36,894</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 </div>
 </div>
@@ -593,11 +1385,27 @@ The housing unit allocation method will provide detail demographic characteristi
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run Housing unit allocation analysis</span>
 <span class="n">hua</span><span class="o">.</span><span class="n">run_analysis</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
 </pre></div>
 </div>
 </div>
@@ -618,10 +1426,89 @@ The housing unit allocation method will provide detail demographic characteristi
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>guid</th>
+      <th>numprec</th>
+      <th>ownershp</th>
+      <th>geometry</th>
+      <th>aphumerge</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>e38d8575-7880-4a8c-b6d7-225ab1cf9264</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>POINT (-123.8960661064165 46.01272230816045)</td>
+      <td>both</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>af5771b4-4f42-4166-b772-78a3706fa8ac</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>POINT (-123.9034265041881 46.01749849919388)</td>
+      <td>both</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>37532fb5-5107-478b-ab2c-158eb001c68b</td>
+      <td>4.0</td>
+      <td>1.0</td>
+      <td>POINT (-123.9034265041881 46.01749849919388)</td>
+      <td>both</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>66d39314-1c68-4634-a82c-8fcb37f529ff</td>
+      <td>3.0</td>
+      <td>1.0</td>
+      <td>POINT (-123.9002451964179 46.01352343272472)</td>
+      <td>both</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>e519ec32-c5eb-422a-be3d-7ff4bb33f1e2</td>
+      <td>2.0</td>
+      <td>1.0</td>
+      <td>POINT (-123.8989178756465 46.01225606771315)</td>
+      <td>both</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hua_df</span><span class="o">.</span><span class="n">guid</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count                                     6980
+unique                                    4679
+top       a698bf89-e06b-4d88-8116-81037737919b
+freq                                        66
+Name: guid, dtype: object
 </pre></div>
 </div>
 </div>
@@ -632,10 +1519,35 @@ The housing unit allocation method will provide detail demographic characteristi
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count                    21579
+unique                   21579
+top       B410079507001001H002
+freq                         1
+Name: huid, dtype: object
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hua_df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index([&#39;addrptid&#39;, &#39;parid&#39;, &#39;parid_card&#39;, &#39;bldg_id&#39;, &#39;struct_typ&#39;, &#39;str_prob&#39;,
+       &#39;year_built&#39;, &#39;no_stories&#39;, &#39;a_stories&#39;, &#39;b_stories&#39;, &#39;bsmt_type&#39;,
+       &#39;sq_foot&#39;, &#39;gsq_foot&#39;, &#39;occ_type&#39;, &#39;occ_detail&#39;, &#39;major_occ&#39;,
+       &#39;broad_occ&#39;, &#39;appr_bldg&#39;, &#39;repl_cst&#39;, &#39;str_cst&#39;, &#39;nstra_cst&#39;,
+       &#39;nstrd_cst&#39;, &#39;dgn_lvl&#39;, &#39;cont_val&#39;, &#39;efacility&#39;, &#39;dwell_unit&#39;,
+       &#39;str_typ2&#39;, &#39;occ_typ2&#39;, &#39;tract_id&#39;, &#39;guid&#39;, &#39;FID_NEW&#39;, &#39;origin&#39;,
+       &#39;stat_class&#39;, &#39;rmv_improv&#39;, &#39;rmv_land&#39;, &#39;elev&#39;, &#39;period&#39;, &#39;strctid&#39;,
+       &#39;blockid&#39;, &#39;x&#39;, &#39;y&#39;, &#39;huestimate&#39;, &#39;residential&#39;, &#39;randomap&#39;,
+       &#39;randommergeorder&#39;, &#39;blockidstr&#39;, &#39;huid&#39;, &#39;livetype&#39;, &#39;numprec&#39;,
+       &#39;ownershp&#39;, &#39;race&#39;, &#39;hispan&#39;, &#39;vacancy&#39;, &#39;gqtype&#39;, &#39;bgid&#39;, &#39;randomhu&#39;,
+       &#39;aphumerge&#39;, &#39;geometry&#39;],
+      dtype=&#39;object&#39;)
 </pre></div>
 </div>
 </div>
@@ -651,6 +1563,15 @@ The housing unit allocation method will provide detail demographic characteristi
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hua_df</span><span class="o">.</span><span class="n">huid</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>count                     4741
+unique                    4741
+top       B410079507001001H002
+freq                         1
+Name: huid, dtype: object
 </pre></div>
 </div>
 </div>
@@ -692,6 +1613,84 @@ The housing unit allocation method will provide detail demographic characteristi
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_4c32b_">
+  <caption>Table 1. Total Population by Race, Ethncity, and Tenure Status, Joplin, MO, 2010.</caption>
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th class="col_heading level0 col0" colspan="4"></th>
+    </tr>
+    <tr>
+      <th class="index_name level1" >Tenure Status</th>
+      <th class="col_heading level1 col0" >0 No Tenure Status</th>
+      <th class="col_heading level1 col1" >1 Owner Occupied</th>
+      <th class="col_heading level1 col2" >2 Renter Occupied</th>
+      <th class="col_heading level1 col3" >Total Population</th>
+    </tr>
+    <tr>
+      <th class="index_name level0" >Race Ethnicity</th>
+      <th class="blank col0" >&nbsp;</th>
+      <th class="blank col1" >&nbsp;</th>
+      <th class="blank col2" >&nbsp;</th>
+      <th class="blank col3" >&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_4c32b_level0_row0" class="row_heading level0 row0" >0 Vacant HU No Race Ethnicity Data</th>
+      <td id="T_4c32b_row0_col0" class="data row0 col0" >0</td>
+      <td id="T_4c32b_row0_col1" class="data row0 col1" >nan</td>
+      <td id="T_4c32b_row0_col2" class="data row0 col2" >nan</td>
+      <td id="T_4c32b_row0_col3" class="data row0 col3" >0</td>
+    </tr>
+    <tr>
+      <th id="T_4c32b_level0_row1" class="row_heading level0 row1" >1 White alone, Not Hispanic</th>
+      <td id="T_4c32b_row1_col0" class="data row1 col0" >nan</td>
+      <td id="T_4c32b_row1_col1" class="data row1 col1" >2,631</td>
+      <td id="T_4c32b_row1_col2" class="data row1 col2" >2,900</td>
+      <td id="T_4c32b_row1_col3" class="data row1 col3" >5,531</td>
+    </tr>
+    <tr>
+      <th id="T_4c32b_level0_row2" class="row_heading level0 row2" >2 Black alone, Not Hispanic</th>
+      <td id="T_4c32b_row2_col0" class="data row2 col0" >nan</td>
+      <td id="T_4c32b_row2_col1" class="data row2 col1" >7</td>
+      <td id="T_4c32b_row2_col2" class="data row2 col2" >17</td>
+      <td id="T_4c32b_row2_col3" class="data row2 col3" >24</td>
+    </tr>
+    <tr>
+      <th id="T_4c32b_level0_row3" class="row_heading level0 row3" >3 Other Race, Not Hispanic</th>
+      <td id="T_4c32b_row3_col0" class="data row3 col0" >nan</td>
+      <td id="T_4c32b_row3_col1" class="data row3 col1" >136</td>
+      <td id="T_4c32b_row3_col2" class="data row3 col2" >191</td>
+      <td id="T_4c32b_row3_col3" class="data row3 col3" >327</td>
+    </tr>
+    <tr>
+      <th id="T_4c32b_level0_row4" class="row_heading level0 row4" >4 Any Race, Hispanic</th>
+      <td id="T_4c32b_row4_col0" class="data row4 col0" >nan</td>
+      <td id="T_4c32b_row4_col1" class="data row4 col1" >187</td>
+      <td id="T_4c32b_row4_col2" class="data row4 col2" >524</td>
+      <td id="T_4c32b_row4_col3" class="data row4 col3" >711</td>
+    </tr>
+    <tr>
+      <th id="T_4c32b_level0_row5" class="row_heading level0 row5" >5 Group Quarters no Race Ethnicity Data</th>
+      <td id="T_4c32b_row5_col0" class="data row5 col0" >47</td>
+      <td id="T_4c32b_row5_col1" class="data row5 col1" >nan</td>
+      <td id="T_4c32b_row5_col2" class="data row5 col2" >nan</td>
+      <td id="T_4c32b_row5_col3" class="data row5 col3" >47</td>
+    </tr>
+    <tr>
+      <th id="T_4c32b_level0_row6" class="row_heading level0 row6" >Total</th>
+      <td id="T_4c32b_row6_col0" class="data row6 col0" >47</td>
+      <td id="T_4c32b_row6_col1" class="data row6 col1" >2,961</td>
+      <td id="T_4c32b_row6_col2" class="data row6 col2" >3,632</td>
+      <td id="T_4c32b_row6_col3" class="data row6 col3" >6,640</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 </div>
 <div class="section" id="validate-the-housing-unit-allocation-has-worked">
 <h4>Validate the Housing Unit Allocation has worked<a class="headerlink" href="#validate-the-housing-unit-allocation-has-worked" title="Permalink to this headline">¶</a></h4>
@@ -714,6 +1713,88 @@ This can be confirmed by going to <a class="reference external" href="http://dat
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/local/Caskroom/miniconda/base/envs/pyincore/lib/python3.7/site-packages/pyproj/crs/crs.py:131: FutureWarning: &#39;+init=&lt;authority&gt;:&lt;code&gt;&#39; syntax is deprecated. &#39;&lt;authority&gt;:&lt;code&gt;&#39; is the preferred initialization method. When making the change, be mindful of axis order changes: https://pyproj4.github.io/pyproj/stable/gotchas.html#axis-order-changes-in-proj-6
+  in_crs_string = _prepare_from_proj_string(in_crs_string)
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>guid</th>
+      <th>x</th>
+      <th>y</th>
+      <th>ownershp</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>e38d8575-7880-4a8c-b6d7-225ab1cf9264</td>
+      <td>-123.896065</td>
+      <td>46.012722</td>
+      <td>1.0</td>
+      <td>POINT (-123.89606 46.01272)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>af5771b4-4f42-4166-b772-78a3706fa8ac</td>
+      <td>-123.903427</td>
+      <td>46.017498</td>
+      <td>1.0</td>
+      <td>POINT (-123.90343 46.01750)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>37532fb5-5107-478b-ab2c-158eb001c68b</td>
+      <td>-123.903427</td>
+      <td>46.017498</td>
+      <td>1.0</td>
+      <td>POINT (-123.90343 46.01750)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>66d39314-1c68-4634-a82c-8fcb37f529ff</td>
+      <td>-123.900246</td>
+      <td>46.013523</td>
+      <td>1.0</td>
+      <td>POINT (-123.90025 46.01352)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>e519ec32-c5eb-422a-be3d-7ff4bb33f1e2</td>
+      <td>-123.898918</td>
+      <td>46.012257</td>
+      <td>1.0</td>
+      <td>POINT (-123.89892 46.01226)</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0edcff97-8fa1-4558-b80e-610abe7b9f17</td>
+      <td>-123.898552</td>
+      <td>46.012253</td>
+      <td>1.0</td>
+      <td>POINT (-123.89855 46.01225)</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -723,6 +1804,9 @@ This can be confirmed by going to <a class="reference external" href="http://dat
 <span class="nb">map</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/Seaside_CommDescription_43_0.png" src="../_images/Seaside_CommDescription_43_0.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -735,6 +1819,9 @@ This can be confirmed by going to <a class="reference external" href="http://dat
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/Seaside_CommDescription_44_0.png" src="../_images/Seaside_CommDescription_44_0.png" />
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -742,6 +1829,11 @@ This can be confirmed by going to <a class="reference external" href="http://dat
 <span class="n">center_x</span> <span class="o">=</span> <span class="n">hua_gdf</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">minx</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="n">center_y</span> <span class="o">=</span> <span class="n">hua_gdf</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">miny</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-123.92208882309136, 45.993245623631466)
 </pre></div>
 </div>
 </div>
@@ -758,6 +1850,11 @@ This can be confirmed by going to <a class="reference external" href="http://dat
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ipyleaflet Version &quot;</span><span class="p">,</span><span class="n">ipylft</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ipyleaflet Version  0.13.6
 </pre></div>
 </div>
 </div>
@@ -791,6 +1888,10 @@ This can be confirmed by going to <a class="reference external" href="http://dat
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "f64cc3a2447e47df8c7b5e30b3514456", "version_major": 2, "version_minor": 0}
+</script></div>
 </div>
 </div>
 </div>
