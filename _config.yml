@@ -9,7 +9,7 @@ logo: images/resilience_logo.png
 # See https://jupyterbook.org/content/execute.html
 execute:
   execute_notebooks: 'off'
-  timeout: 100000000000
+  timeout: 10000000000
 
 
 # # Define the name of the latex output file for PDF builds
