@@ -371,6 +371,11 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Connection successful to IN-CORE services. pyIncore version detected: 1.0.0
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -462,6 +467,24 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="tsunami-building-damage">
@@ -505,6 +528,24 @@
 
     <span class="n">bldg_dmg</span><span class="o">.</span><span class="n">run_analysis</span><span class="p">()</span>
     <span class="n">bldg_tsu_dmg_result_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bldg_dmg</span><span class="o">.</span><span class="n">get_output_dataset</span><span class="p">(</span><span class="s1">&#39;ds_result&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
 </pre></div>
 </div>
 </div>
@@ -597,6 +638,17 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Recurrence Interval: 100
+Recurrence Interval: 250
+Recurrence Interval: 500
+Recurrence Interval: 1000
+Recurrence Interval: 2500
+Recurrence Interval: 5000
+Recurrence Interval: 10000
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -655,6 +707,87 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Multi-hazard MC failure probabilities:
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>failure_prob_100</th>
+      <th>failure_prob_250</th>
+      <th>failure_prob_500</th>
+      <th>failure_prob_1000</th>
+      <th>failure_prob_2500</th>
+    </tr>
+    <tr>
+      <th>guid</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>fba4c73f-9b1b-4942-b7fb-bc276a4e0a4e</th>
+      <td>0.077</td>
+      <td>0.512</td>
+      <td>0.679</td>
+      <td>0.740</td>
+      <td>0.941</td>
+    </tr>
+    <tr>
+      <th>65d6e370-c05b-4b2f-bd17-d914d1d056c7</th>
+      <td>0.050</td>
+      <td>0.458</td>
+      <td>0.604</td>
+      <td>0.684</td>
+      <td>0.777</td>
+    </tr>
+    <tr>
+      <th>dad76485-9694-409e-ac7f-c64c7bd5c32c</th>
+      <td>0.076</td>
+      <td>0.523</td>
+      <td>0.672</td>
+      <td>0.758</td>
+      <td>0.948</td>
+    </tr>
+    <tr>
+      <th>6f57cfb6-d244-40d5-96f5-03aeddd5e30a</th>
+      <td>0.038</td>
+      <td>0.434</td>
+      <td>0.629</td>
+      <td>0.673</td>
+      <td>0.934</td>
+    </tr>
+    <tr>
+      <th>929f1040-6224-409d-b4e3-58946daf3b91</th>
+      <td>0.077</td>
+      <td>0.502</td>
+      <td>0.681</td>
+      <td>0.726</td>
+      <td>0.810</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 <div class="section" id="plotting-histograms-of-failure-probabilities">
 <h3>4.1. Plotting histograms of failure probabilities<a class="headerlink" href="#plotting-histograms-of-failure-probabilities" title="Permalink to this headline">¶</a></h3>
@@ -695,6 +828,12 @@
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Failure Probability&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Failure Probability&#39;)
+</pre></div>
+</div>
+<img alt="../_images/Seaside_testbed_20_1.png" src="../_images/Seaside_testbed_20_1.png" />
 </div>
 </div>
 </div>
@@ -765,6 +904,13 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+</pre></div>
+</div>
+<img alt="../_images/Seaside_testbed_22_1.png" src="../_images/Seaside_testbed_22_1.png" />
+</div>
 </div>
 </div>
 <div class="section" id="computing-expected-economic-risks">
@@ -792,6 +938,9 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/Seaside_testbed_24_0.png" src="../_images/Seaside_testbed_24_0.png" />
+</div>
 </div>
 </div>
 </div>
@@ -806,6 +955,29 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "18acdc60823b4ae2be8d31db977f0447", "version_major": 2, "version_minor": 0}
+</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading:  mc_buildings_eq_500yr_failure_probability.csv
+there is no existing layer
+Done loading layer.
+
+
+Loading:  mc_buildings_eq_100yr_failure_probability.csv
+removed previous layer
+Done loading layer.
+
+
+Loading:  mc_buildings_eq_500yr_failure_probability.csv
+removed previous layer
+Done loading layer.
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -815,12 +987,38 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "0b34ace0b5c2485299a0013605142b10", "version_major": 2, "version_minor": 0}
+</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading:  mc_buildings_tsu_500yr_failure_probability.csv
+there is no existing layer
+Done loading layer.
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># showing mc cumulative building damage result</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">viz</span><span class="o">.</span><span class="n">plot_table_dataset_list_from_single_source</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">mc_bldg_cumul_dmg_result_list</span><span class="p">,</span> <span class="s1">&#39;failure_probability&#39;</span><span class="p">,</span> <span class="s1">&#39;5d927ab2b9219c06ae8d313c&#39;</span><span class="p">)</span>
 <span class="n">m</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dataset already exists locally. Reading from local cached zip.
+Unzipped folder found in the local cache. Reading from it...
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id": "fb59424e9afd4f84a2c40554cd34deda", "version_major": 2, "version_minor": 0}
+</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading:  mc_buildings_cumulative_500yr_failure_probability.csv
+there is no existing layer
+Done loading layer.
 </pre></div>
 </div>
 </div>
