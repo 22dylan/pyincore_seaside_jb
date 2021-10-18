@@ -5,11 +5,15 @@ format: jb-book
 root: intro
 
 parts:
-  - caption: Notebooks
+  - caption: Demonstrative Notebooks
     chapters:
-    - file: nb1/Seaside_testbed
-    - file: nb2/Seaside_CommDescription
-    - file: nb3/Notebook1_Seaside
+    - file: notebooks_demonstrative/dnb1/Seaside_testbed
+    - file: notebooks_demonstrative/dnb2/Seaside_CommDescription
+    - file: notebooks_demonstrative/dnb3/Notebook1_Seaside
+  - caption: Research Notebooks
+    chapters:
+    - file: notebooks_research/rnb1/SBN
+    # - file: notebooks_demonstrative/nb2/Seaside_CommDescription
   - caption: References
     chapters:
     - file: ref/ref
